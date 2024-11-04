@@ -1,12 +1,10 @@
 name: Resume Linting and Validation
 
 on:
-  push:
+  push:          # Trigger on push events
+  pull_request:  # Trigger on pull requests
     branches:
-      - '**'
-  pull_request:
-    branches:
-      - main
+      - '**'     # Run on pull requests to all branches
 
 jobs:
   lint:
@@ -19,14 +17,50 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '16'
+          node-version: '16'  # Choose a version compatible with your tools
 
       - name: Install dependencies
         run: |
-          npm install -g markdownlint-cli codespell
+          npm install -g markdownlint-cli spellchecker pdf-parse
 
       - name: Run Markdown Lint
         run: markdownlint **/*.md
 
-      - name: Run Spell Check
-        run: codespell -q 3 
+      - name: Spell Check PDF
+        run: |
+          # Create a new script to spell check PDF
+          echo "
+          const fs = require('fs');
+          const pdf = require('pdf-parse');
+          const spellchecker = require('spellchecker');
+
+          const pdfFilePath = 'Raoul Mahtani Resume.pdf';
+
+          fs.readFile(pdfFilePath, (err, data) => {
+            if (err) {
+              console.error('Error reading the PDF file:', err);
+              process.exit(1);
+            }
+
+            pdf(data).then((pdfData) => {
+              const text = pdfData.text;
+              const words = text.split(/\\s+/);
+              const misspelledWords = [];
+
+              words.forEach((word) => {
+                if (spellchecker.isMisspelled(word)) {
+                  misspelledWords.push(word);
+                }
+              });
+
+              if (misspelledWords.length > 0) {
+                console.log('Misspelled words found:', [...new Set(misspelledWords)]);
+                process.exit(1); // Exit with error if there are misspelled words
+              } else {
+                console.log('No spelling errors found.');
+              }
+            });
+          });
+          " > spellCheckPdf.js
+          
+          node spellCheckPdf.js
