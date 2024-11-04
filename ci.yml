@@ -1,0 +1,32 @@
+name: Resume Linting and Validation
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'  # Choose a version compatible with your tools
+
+      - name: Install dependencies
+        run: |
+          npm install -g markdownlint-cli codespell
+
+      - name: Run Markdown Lint
+        run: markdownlint **/*.md
+
+      - name: Run Spell Check
+        run: codespell -q 3  # Adjust the -q parameter for severity (3 = ignore trivial errors)
