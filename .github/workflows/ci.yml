@@ -21,7 +21,11 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm install markdownlint-cli spellchecker pdf-parse
+          npm install -g markdownlint-cli spellchecker pdf-parse
+      
+      - name: Link dependencies
+        run: |
+          npm link spellchecker pdf-parse
 
       - name: Run Markdown Lint
         run: markdownlint **/*.md
