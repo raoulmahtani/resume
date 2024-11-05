@@ -21,7 +21,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm install -g markdownlint-cli spellchecker pdf-parse
+          npm install markdownlint-cli spellchecker pdf-parse
 
       - name: Run Markdown Lint
         run: markdownlint **/*.md
@@ -34,7 +34,7 @@ jobs:
           const pdf = require('pdf-parse');
           const spellchecker = require('spellchecker');
 
-          const pdfFilePath = '../Raoul Mahtani Resume.pdf';
+          const pdfFilePath = 'Raoul Mahtani Resume.pdf';
 
           fs.readFile(pdfFilePath, (err, data) => {
             if (err) {
